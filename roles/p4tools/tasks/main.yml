@@ -1,0 +1,139 @@
+- name: Install dependencies
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items: "{{ dependency_packages }}"
+
+- name: Checkout protobuf repo
+  git: 
+    repo: "{{ protobuf_repo }}"
+    dest: "{{ build_dir }}/protobuf"
+    version: "{{ protobuf_version }}"
+
+- name: Build and install protobuf
+  command: "{{ item }}"
+  become: yes
+  args:
+    chdir: "{{ build_dir }}/protobuf"
+  environment: 
+    CFLAGS: -Os
+    CXXFLAGS: -Os
+    LDFLAGS: -Wl,-s
+  with_items:
+    - ./autogen.sh
+    - ./configure --prefix=/usr
+    - make -j{{ num_cores }}
+    - make install
+    - ldconfig
+
+- name: Checkout gRPC repo
+  git: 
+    repo: "{{ grpc_repo }}"
+    dest: "{{ build_dir }}/grpc"
+    version: "{{ grpc_version }}"
+
+- name: Build and install gRPC
+  command: "{{ item }}"
+  become: yes
+  args:
+    chdir: "{{ build_dir }}/grpc"
+  environment: 
+    LDFLAGS: -Wl,-s
+  with_items:
+    - make -j{{ num_cores }}
+    - make install
+    - ldconfig
+
+- name: Checkout BMv2 repo
+  git: 
+    repo: "{{ bmv2_repo }}"
+    dest: "{{ build_dir }}/bmv2"
+    version: "{{ bmv2_version }}"
+
+- name: Create temporary build directory for BMv2
+  become: yes
+  tempfile:
+    path: "{{ build_dir }}/bmv2"
+    state: directory
+  register: bmv2_tempdir
+   
+- name: Install bmv2 dependencies
+  command: "{{ item }}"
+  become: yes
+  args:
+    chdir: "{{ bmv2_tempdir.path }}"
+  with_items:
+    - bash ../travis/install-thrift.sh
+    - bash ../travis/install-nanomsg.sh
+    - ldconfig
+    - bash ../travis/install-nnpy.sh
+
+- name: Delete bmv2 temporary build directory
+  file:
+    state: absent
+    path: "{{ bmv2_tempdir.path }}"
+
+- name: Checkout P4Runtime repo
+  git: 
+    repo: "{{ p4runtime_repo }}"
+    dest: "{{ build_dir }}/p4runtime"
+    version: "{{ p4runtime_version }}"
+
+- name: Build and install P4Runtime
+  command: "{{ item }}"
+  become: yes
+  args:
+    chdir: "{{ build_dir }}/p4runtime"
+  with_items:
+    - ./autogen.sh
+    - ./configure --with-proto 'CXXFLAGS=-O0 -g'
+    - make -j{{ num_cores }}
+    - make install
+    - ldconfig
+
+- name: Build and install BMv2
+  command: "{{ item }}"
+  become: yes
+  args:
+    chdir: "{{ build_dir }}/bmv2"
+  with_items:
+    - ./autogen.sh
+    - ./configure --enable-debugger --with-pi 'CXXFLAGS=-O0 -g'
+    - make -j4
+    - make install
+    - ldconfig
+
+- name: Build and install simple_switch_grpc target
+  command: "{{ item }}"
+  become: yes
+  args:
+    chdir: "{{ build_dir }}/bmv2/targets/simple_switch_grpc"
+  with_items:
+    - ./autogen.sh
+    - ./configure 'CXXFLAGS=-O0 -g'
+    - make -j4
+    - make install
+    - ldconfig
+
+- name: Checkout p4c repo
+  git: 
+    repo: "{{ p4c_repo }}"
+    dest: "{{ build_dir }}/p4c"
+    version: "{{ p4c_version }}"
+
+- name: Create p4c build directory
+  file: 
+    path: "{{ build_dir }}/p4c/build"
+    state: directory
+
+- name: Build and install p4c
+  command: "{{ item }}"
+  become: yes
+  args:
+    chdir: "{{ build_dir }}/p4c/build"
+  with_items:
+    - cmake ..
+    - make -j4
+    - make install
+    - ldconfig
+

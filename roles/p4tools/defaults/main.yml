@@ -1,0 +1,78 @@
+dependency_packages:
+  - autoconf 
+  - automake 
+  - bison 
+  - build-essential 
+  - cmake 
+  - cpp 
+  - curl 
+  - flex 
+  - git 
+  - libboost-dev 
+  - libboost-program-options-dev 
+  - libboost-system-dev 
+  - libboost-filesystem-dev 
+  - libboost-thread-dev 
+  - libboost-filesystem-dev 
+  - libboost-program-options-dev 
+  - libboost-system-dev 
+  - libboost-test-dev 
+  - libboost-thread-dev 
+  - libc6-dev 
+  - libevent-dev 
+  - libffi-dev 
+  - libfl-dev 
+  - libgc-dev 
+  - libgc1c2 
+  - libgflags-dev 
+  - libgmp-dev 
+  - libjudy-dev 
+  - libpcap-dev 
+  - libgmp10 
+  - libgmpxx4ldbl 
+  - libjudy-dev 
+  - libpcap-dev 
+  - libreadline6 
+  - libreadline6-dev 
+  - libssl-dev 
+  - libtool 
+  - make 
+  - mktemp 
+  - pkg-config 
+  - python 
+  - python-dev 
+  - python-ipaddr 
+  - python-pip 
+  - python-scapy 
+  - python-setuptools 
+  - tcpdump 
+  - wget 
+  - unzip
+
+num_cores: "{% if ansible_processor_vcpus is defined %}{{ ansible_processor_vcpus }}{% else %}auto{% endif %}"
+
+build_dir: "/tmp/p4tools"
+
+protobuf_repo: "https://github.com/google/protobuf.git"
+protobuf_version: "master"
+
+grpc_repo: "https://github.com/grpc/grpc.git"
+grpc_version: "master"
+
+bmv2_repo: "https://github.com/p4lang/behavioral-model.git"
+bmv2_version: "master"
+
+p4runtime_repo: "https://github.com/p4lang/PI.git"
+p4runtime_version: "master"
+
+p4c_repo: "https://github.com/p4lang/p4c.git"
+p4c_version: "master"
+
+
+
+
+
+
+
+
+
