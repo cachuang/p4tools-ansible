@@ -3,17 +3,20 @@ dependency_packages:
   - automake 
   - bison 
   - build-essential 
+  - ca-certificates
   - cmake 
   - cpp 
   - curl 
   - flex 
   - git 
+  - g++
   - libboost-dev 
   - libboost-program-options-dev 
   - libboost-system-dev 
   - libboost-filesystem-dev 
   - libboost-thread-dev 
   - libboost-filesystem-dev 
+  - libboost-iostreams1.58-dev
   - libboost-program-options-dev 
   - libboost-system-dev 
   - libboost-test-dev 
@@ -67,12 +70,3 @@ p4runtime_version: "master"
 
 p4c_repo: "https://github.com/p4lang/p4c.git"
 p4c_version: "master"
-
-
-
-
-
-
-
-
-
