@@ -1,60 +1,74 @@
 dependency_packages:
-  - autoconf 
-  - automake 
-  - bison 
-  - build-essential 
-  - ca-certificates
-  - cmake 
-  - cpp 
-  - curl 
-  - flex 
-  - git 
-  - g++
-  - libboost-dev 
-  - libboost-program-options-dev 
-  - libboost-system-dev 
-  - libboost-filesystem-dev 
-  - libboost-thread-dev 
-  - libboost-filesystem-dev 
-  - libboost-iostreams1.58-dev
-  - libboost-program-options-dev 
-  - libboost-system-dev 
-  - libboost-test-dev 
-  - libboost-thread-dev 
-  - libc6-dev 
-  - libevent-dev 
-  - libffi-dev 
-  - libfl-dev 
-  - libgc-dev 
-  - libgc1c2 
-  - libgflags-dev 
-  - libgmp-dev 
-  - libjudy-dev 
-  - libpcap-dev 
-  - libgmp10 
-  - libgmpxx4ldbl 
-  - libjudy-dev 
-  - libpcap-dev 
-  - libreadline6 
-  - libreadline6-dev 
-  - libssl-dev 
-  - libtool 
-  - make 
-  - mktemp 
-  - pkg-config 
-  - python 
-  - python-dev 
-  - python-ipaddr 
-  - python-pip 
-  - python-scapy 
-  - python-setuptools 
-  - tcpdump 
-  - wget 
+  - autoconf
+  - automake
+  - bison
+  - build-essential
+  - cmake
+  - cpp
+  - curl
+  - flex
+  - git
+  - libboost-dev
+  - libboost-program-options-dev
+  - libboost-system-dev
+  - libboost-filesystem-dev
+  - libboost-thread-dev
+  - libboost-filesystem-dev
+  - libboost-program-options-dev
+  - libboost-system-dev
+  - libboost-test-dev
+  - libboost-thread-dev
+  - libc6-dev
+  - libevent-dev
+  - libffi-dev
+  - libfl-dev
+  - libgc-dev
+  - libgc1c2
+  - libgflags-dev
+  - libgmp-dev
+  - libjudy-dev
+  - libpcap-dev
+  - libgmp10
+  - libgmpxx4ldbl
+  - libjudy-dev
+  - libpcap-dev
+  - libreadline6
+  - libreadline6-dev
+  - libssl-dev
+  - libtool
+  - make
+  - mktemp
+  - pkg-config
+  - python
+  - python-dev
+  - python-ipaddr
+  - python-pip
+  - python-scapy
+  - python-setuptools
+  - tcpdump
+  - wget
   - unzip
+
+ubuntu_1404_apt_repo:
+    - ppa:ubuntu-toolchain-r/test
+    - ppa:george-edison55/cmake-3.x
+
+ubuntu_1404_dependencies:
+    - cmake
+    - dpkg-dev
+    - g++-4.9
+    - gcc-4.9
+    - libboost-iostreams-dev
+
+ubuntu_1604_dependencies:
+    - ca-certificates
+    - cmake
+    - g++
+    - libboost-iostreams1.58-dev
 
 num_cores: "{% if ansible_processor_vcpus is defined %}{{ ansible_processor_vcpus }}{% else %}auto{% endif %}"
 
-build_dir: "/tmp/p4tools"
+build_dir: "~/p4tools"
 
 protobuf_repo: "https://github.com/google/protobuf.git"
 protobuf_version: "master"

@@ -4,8 +4,32 @@
     update_cache: yes
   with_items: "{{ dependency_packages }}"
 
+- name: Add required repository for Ubuntu 14.04
+  apt_repository:
+    repo: "{{ item }}"
+    with_items: "{{ ubuntu_1404_apt_repo }}"
+
+- name: Install Ubuntu 14.04 requirements
+  apt:
+    name: "{{ item }}"
+  with_items: "{{ ubuntu_1404_dependencies }}"
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '14.04'
+
+- name: Link required verion of gcc/g++ for Ubuntu 14.04
+  alternatives: name={{ item.name }} link={{ item.link }} path={{ item.path }}
+  with_items:
+    - { name: gcc, link: /usr/bin/gcc, path: /usr/bin/gcc-4.9 }
+    - { name: g++, link: /usr/bin/g++, path: /usr/bin/g++-4.9 }
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '14.04'
+
+- name: Install Ubuntu 16.04 requirements
+  apt:
+    name: "{{ item }}"
+  with_items: "{{ ubuntu_1604_dependencies }}"
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+
 - name: Checkout protobuf repo
-  git: 
+  git:
     repo: "{{ protobuf_repo }}"
     dest: "{{ build_dir }}/protobuf"
     version: "{{ protobuf_version }}"
@@ -15,7 +39,7 @@
   become: yes
   args:
     chdir: "{{ build_dir }}/protobuf"
-  environment: 
+  environment:
     CFLAGS: -Os
     CXXFLAGS: -Os
     LDFLAGS: -Wl,-s
@@ -27,7 +51,7 @@
     - ldconfig
 
 - name: Checkout gRPC repo
-  git: 
+  git:
     repo: "{{ grpc_repo }}"
     dest: "{{ build_dir }}/grpc"
     version: "{{ grpc_version }}"
@@ -37,7 +61,7 @@
   become: yes
   args:
     chdir: "{{ build_dir }}/grpc"
-  environment: 
+  environment:
     LDFLAGS: -Wl,-s
   with_items:
     - make -j{{ num_cores }}
@@ -45,7 +69,7 @@
     - ldconfig
 
 - name: Checkout BMv2 repo
-  git: 
+  git:
     repo: "{{ bmv2_repo }}"
     dest: "{{ build_dir }}/bmv2"
     version: "{{ bmv2_version }}"
@@ -56,7 +80,7 @@
     path: "{{ build_dir }}/bmv2"
     state: directory
   register: bmv2_tempdir
-   
+
 - name: Install bmv2 dependencies
   command: "{{ item }}"
   become: yes
@@ -74,7 +98,7 @@
     path: "{{ bmv2_tempdir.path }}"
 
 - name: Checkout P4Runtime repo
-  git: 
+  git:
     repo: "{{ p4runtime_repo }}"
     dest: "{{ build_dir }}/p4runtime"
     version: "{{ p4runtime_version }}"
@@ -116,13 +140,13 @@
     - ldconfig
 
 - name: Checkout p4c repo
-  git: 
+  git:
     repo: "{{ p4c_repo }}"
     dest: "{{ build_dir }}/p4c"
     version: "{{ p4c_version }}"
 
 - name: Create p4c build directory
-  file: 
+  file:
     path: "{{ build_dir }}/p4c/build"
     state: directory
 
@@ -136,4 +160,3 @@
     - make -j4
     - make install
     - ldconfig
-
