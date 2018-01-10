@@ -1,6 +1,5 @@
 --- 
 - name: Install P4 tools
-  become: yes
   hosts: all
   roles:
     - p4tools

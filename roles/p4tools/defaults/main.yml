@@ -68,7 +68,8 @@ ubuntu_1604_dependencies:
 
 num_cores: "{% if ansible_processor_vcpus is defined %}{{ ansible_processor_vcpus }}{% else %}auto{% endif %}"
 
-build_dir: "~/p4tools"
+user_home: "{{ ansible_env.HOME }}"
+build_dir: "{{ user_home }}/p4tools"
 
 protobuf_repo: "https://github.com/google/protobuf.git"
 protobuf_version: "master"

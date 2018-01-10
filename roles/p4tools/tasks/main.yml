@@ -1,21 +1,27 @@
 - name: Install dependencies
+  become: yes
   apt:
     name: "{{ item }}"
     update_cache: yes
   with_items: "{{ dependency_packages }}"
 
 - name: Add required repository for Ubuntu 14.04
+  become: yes
   apt_repository:
     repo: "{{ item }}"
-    with_items: "{{ ubuntu_1404_apt_repo }}"
+    update_cache: yes
+  with_items: "{{ ubuntu_1404_apt_repo }}"
 
 - name: Install Ubuntu 14.04 requirements
+  become: yes
   apt:
     name: "{{ item }}"
+    state: latest
   with_items: "{{ ubuntu_1404_dependencies }}"
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '14.04'
 
 - name: Link required verion of gcc/g++ for Ubuntu 14.04
+  become: yes
   alternatives: name={{ item.name }} link={{ item.link }} path={{ item.path }}
   with_items:
     - { name: gcc, link: /usr/bin/gcc, path: /usr/bin/gcc-4.9 }
@@ -23,10 +29,16 @@
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '14.04'
 
 - name: Install Ubuntu 16.04 requirements
+  become: yes
   apt:
     name: "{{ item }}"
   with_items: "{{ ubuntu_1604_dependencies }}"
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '16.04'
+
+- name: Create build directory
+  file: 
+    path: "{{ build_dir }}" 
+    state: directory 
 
 - name: Checkout protobuf repo
   git:
@@ -75,7 +87,6 @@
     version: "{{ bmv2_version }}"
 
 - name: Create temporary build directory for BMv2
-  become: yes
   tempfile:
     path: "{{ build_dir }}/bmv2"
     state: directory
@@ -93,6 +104,7 @@
     - bash ../travis/install-nnpy.sh
 
 - name: Delete bmv2 temporary build directory
+  become: yes
   file:
     state: absent
     path: "{{ bmv2_tempdir.path }}"
